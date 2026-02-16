@@ -1,50 +1,30 @@
+const burger = document.querySelector('[data-burger]');
+const mobileMenu = document.querySelector('[data-mobile]');
+if (burger && mobileMenu) {
+  burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+}
 
-(() => {
-  // ano no rodapé
-  const y = document.getElementById('ano');
-  if (y) y.textContent = new Date().getFullYear();
+// Lightbox
+const lb = document.querySelector('[data-lightbox]');
+const lbImg = document.querySelector('[data-lightbox-img]');
+const lbClose = document.querySelector('[data-lightbox-close]');
 
-  // lightbox simples
-  const gallery = document.querySelector('[data-lightbox]');
-  if (!gallery) return;
-
-  const overlay = document.createElement('div');
-  overlay.className = 'lb';
-  overlay.innerHTML = `
-    <button class="lb__close" aria-label="Fechar">×</button>
-    <img class="lb__img" alt="">
-  `;
-  document.body.appendChild(overlay);
-
-  const img = overlay.querySelector('.lb__img');
-  const closeBtn = overlay.querySelector('.lb__close');
-
-  const open = (src, alt) => {
-    img.src = src;
-    img.alt = alt || '';
-    overlay.classList.add('lb--open');
-    document.body.style.overflow = 'hidden';
-  };
-
-  const close = () => {
-    overlay.classList.remove('lb--open');
-    img.src = '';
-    document.body.style.overflow = '';
-  };
-
-  gallery.addEventListener('click', (e) => {
-    const a = e.target.closest('a');
-    if (!a) return;
-    e.preventDefault();
-    const thumb = a.querySelector('img');
-    open(a.getAttribute('href'), thumb ? thumb.alt : '');
+document.querySelectorAll('[data-gallery]').forEach(item => {
+  item.addEventListener('click', () => {
+    const src = item.getAttribute('data-src');
+    const alt = item.getAttribute('data-alt') || '';
+    lbImg.src = src;
+    lbImg.alt = alt;
+    lb.classList.add('open');
   });
+});
 
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) close();
-  });
-  closeBtn.addEventListener('click', close);
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') close();
-  });
-})();
+function closeLb(){
+  lb.classList.remove('open');
+  lbImg.src = '';
+}
+lbClose?.addEventListener('click', closeLb);
+lb?.addEventListener('click', (e) => { if (e.target === lb) closeLb(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLb(); });
+
+document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
